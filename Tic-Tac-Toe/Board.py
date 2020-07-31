@@ -1,22 +1,13 @@
 class Board():
-    def __init__(self, level=0):
-        # the 3x3 board
-        self.board = [['-'] * 3] * 3
-
-        # our representation of the player
-        self.player = 'X'
-        # our representation of the AI
-        self.ai = 'O'
-        # level of AI
-        self.level = level
-        return
-
-    def get_actions(self):
+    """
+    Provides Utility functions for the board.
+    """
+    @staticmethod
+    def get_actions(board):
         """
-        returns a list of tuples of i, j positions
-        empty in the board
+        returns a list of tuples of (i, j) positions
+        empty in the board.
         """
-        board = self.board
         actions = []
         # finding the empty cells
         for i in range(len(board)):
@@ -26,11 +17,11 @@ class Board():
         # done
         return actions
 
-    def evaluate(self):
+    @staticmethod
+    def evaluate(board):
         """
         returns the winner if any, else None
         """
-        board = self.board
         
         # row scan
         for i in range(len(board)):
@@ -50,11 +41,12 @@ class Board():
         # Couldn't find any winner
         return None
 
-    def print_board(self):
+    @staticmethod
+    def print_board(board):
         """
-        prints out the current state of the board.
+        prints out the given board.
         """
-        for row in self.board:
+        for row in board:
             print("| ", end="")
             for item in row:
                 print(item, " | ", end="")
@@ -63,7 +55,10 @@ class Board():
         return
 
 #################### TESTING ZONE ####################
-# game = Board()
-# game.print_board()
-# print(game.evaluate())
-# print(game.get_actions())
+# board = [
+#     ['X', 'O', 'O'],
+#     ['X', '-', '-'],
+#     ['-', '-', '-'],
+# ]
+# print(evaluate(board))
+# print_board(board)
