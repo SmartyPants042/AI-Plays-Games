@@ -53,12 +53,3 @@ class Board():
             print()
         
         return
-
-#################### TESTING ZONE ####################
-# board = [
-#     ['X', 'O', 'O'],
-#     ['X', '-', '-'],
-#     ['-', '-', '-'],
-# ]
-# print(evaluate(board))
-# print_board(board)

@@ -5,6 +5,7 @@ import random
 MAX = float('inf')
 
 class AI():
+    @staticmethod
     def minimax(maxiPlayer, depth_left, board, alpha, beta):
         """
         The Minimax Algorithm with pruning.
@@ -31,11 +32,12 @@ class AI():
         # termination condition
         # (final_score, game_over) = evaluate(board)
         winner = Board.evaluate(board)
-        if not depth_left or not winner:
-            # if final_score:
-            #     print(final_score, board)
-            return 1 if winner == 'O' else -1 
 
+        if winner:
+            return 1 if winner == 'O' else -1
+        if not depth_left:
+            return 0
+        
         # calculate the possible future states
         children = Board.get_actions(board)
 
@@ -75,11 +77,12 @@ class AI():
         # Yeet
         return best
 
-
-    def move(board, level=4):
+    @staticmethod
+    def move(board, level=5):
         """
         Makes a move using the the algorithm.
-        Does the first initial 'play' of the algorithm.
+        Does the first initial 'play' of the algorithm,
+        to extract the move, which the minimax actually hides.
         """
 
         # game logic
@@ -103,8 +106,6 @@ class AI():
 
             score = AI.minimax(False, level, new_copy_board, -MAX, +MAX)
             
-            print(score)
-
             if score == 1:
                 ai_win.append(child)
             elif score == -1:
@@ -112,23 +113,14 @@ class AI():
             else:
                 hmm.append(child)
 
-        count_player_win = len(player_win)
-        count_ai_win = len(ai_win)
-        count_hmm = len(hmm)
-
-        if count_ai_win:
+        # picks random moves from a given set of scores
+        # to keep it interesting ;)
+        if len(ai_win):
             best_move = random.choice(ai_win)
-        elif count_hmm:
+        elif len(hmm):
             best_move = random.choice(hmm)
+        # THIS. IS. SO. SAD.
         else:
             best_move = random.choice(player_win)
-        print(board, best_move, best_score)
-        return best_move
 
-#################### TESTING ZONE ####################
-# board = [
-#     ['X', '-', 'O'],
-#     ['-', 'X', '-'],
-#     ['O', 'X', 'O'],
-# ]
-# print(AI.move(board))
+        return best_move
