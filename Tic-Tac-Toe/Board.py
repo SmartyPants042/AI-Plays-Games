@@ -30,7 +30,7 @@ class Board():
         # column scan
         for i in range(len(board)):
             if (board[0][i] == board[1][i] == board[2][i]) and (board[0][i] != '-'):
-                return board[i][0]
+                return board[0][i]
         # primary diagonal
         if (board[0][0] == board[1][1] == board[2][2]) and (board[1][1] != '-'):
             return board[0][0]
