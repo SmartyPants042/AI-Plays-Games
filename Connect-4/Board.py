@@ -9,9 +9,16 @@ class Board():
         empty in the board.
         """
         actions = []
-        # finding the empty cells
+        # taking the transpose
+        transpose = [[ board[i][j] for i in range(len(board))] for j in range(len(board[0]))]
+        # transpose = list(map(list, zip(*board)))
 
-        pass
+        # finding the empty cells
+        for i in range(len(transpose)):
+            for j in reversed(range(len(transpose[0]))):
+                if transpose[i][j] == '-':
+                    actions.append((j,i))
+                    break
 
         # done
         return actions
@@ -24,7 +31,7 @@ class Board():
         
         # check rows
         for i in range(len(board)):
-            for j in range(len(board[0] - 3)):
+            for j in range(len(board[0]) - 3):
                 if board[i][j] == board[i][j+1] == board[i][j+2] == board[i][j+3] and board[i][j] != '-':
                     return board[i][j]
 
@@ -36,19 +43,17 @@ class Board():
 
         # checking diagonal type 1
         for i in range(len(board)-3):
-            for j in range(len(board[0]-3)):
+            for j in range(len(board[0])-3):
                 if board[i][j] == board[i+1][j+1] == board[i+2][j+2] == board[i+3][j+3] and board[i][j] != '-':
                     return board[i][j]
 
         # checking diagonal type 2
         for i in range(len(board)-3):
-            for j in range(len(board[0]-3)):
+            for j in range(len(board[0])-3):
                 if board[i+3][j] == board[i+2][j+1] == board[i+1][j+2] == board[i][j+3] and board[i][j+3] != '-':
                     return board[i][j+3]
 
         return None
-
-
 
     @staticmethod
     def print_board(board):
@@ -63,13 +68,17 @@ class Board():
         
         return
 
-#################### TESTING ZONE ####################
-board = [
-    ['-', '-', '-', '-', '-'],
-    ['-', '-', 'X', '-', '-'],
-    ['-', '-', 'X', '-', '-'],
-    ['-', '-', 'X', '-', '-'],
-    ['-', '-', 'X', '-', '-'],
-]
+    @staticmethod
+    def get_board_size(board):
+        # returns the board size for MCTS's saving part
+        return (len(board), len(board[0]))
 
-print(Board.evaluate(board))
+#################### TESTING ZONE ####################
+# board = [
+#     ['-', '-', '-', 'X', '-'],
+#     ['-', '-', '-', 'X', '-'],
+#     ['-', '-', 'O', 'X', '-'],
+#     ['-', 'O', 'X', 'O', '-'],
+#     ['-', 'O', 'X', 'X', '-'],
+# ]
+# print(Board.get_actions(board))
