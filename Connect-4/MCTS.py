@@ -3,7 +3,7 @@ import math
 
 MAX = float('inf')
 
-iterations = 1
+iterations = 10
 
 # the balance between exploration 
 # and exploitation. 
@@ -48,7 +48,10 @@ class MCTS():
         # if the node is newly initiated,
         # this condition will get activated
         if node.count == 0:
-            return float('inf') 
+            if node.maxiPlayer:
+                return -float('inf')
+            else:
+                return +float('inf')
 
         # Exploitation Logic: If this node has given me 
         # good results before, it will give them again
@@ -70,22 +73,15 @@ class MCTS():
         if the player is maximizer, we return the max
         if the player is minimizer, we return the min
         """
-        
         best_child = None
         if node.maxiPlayer:
             best_score = -MAX
         else:
             best_score = MAX
 
-        if not (node.children):
-            # print("Initialising node's children myself ... ")
-            node.children = generate_children(node)
-            # print("Done!")
-
         # iterate through all the children
         for child in node.children:
-            score = upper_confidence_bound(child)
-
+            score = MCTS.upper_confidence_bound(child)
             # finding the max scoring child
             if node.maxiPlayer:
                 if(score > best_score):
@@ -114,21 +110,25 @@ class MCTS():
                 the current leaf node
         returns:
             a list of all possible game states, aka, children
-            given as tuple of (actions, nodes_generated_by_them)
-            And, the board generated will be depending upon
-            whether the child is maximizer or a minimizer
         """
 
         # flipping the polarity of the children
-        maxiPlayer = not self.maxiPlayer
-        all_actions = get_actions()
+        maxiPlayer = not node.maxiPlayer
+
+        # get me the actions for this particular player
+        all_actions = Board.get_actions(node.game_state, maxiPlayer)
+
         children = []
         for action in all_actions:
+
+            # create a new board
             new_game_state = Board.simulate_action(
                 action, 
                 maxiPlayer, 
                 node.game_state
             )
+
+            # init a new node
             child = Node(new_game_state, maxiPlayer)
             children.append(child) 
 
@@ -141,19 +141,41 @@ class MCTS():
         inputs:
             node:
                 the current game state
-            maxiPlayer:
-                is the current node maximizer or
-                minimizer
         returns: 
             the final score of the game state
 
         NOTE: We don't case what actions are taken to 
         get there. They can be ANYTHING!
         """
-        pass
+
+        game_state = node.game_state
+        maxiPlayer = node.maxiPlayer
+        init_maxiPlayer = maxiPlayer
+        evaluation_results = Board.evaluate(game_state)
+
+        # NOTE: To flip the maxiPlayer before or after
+        # creates no difference, as we just want the final
+        # resilution of the game
+        while evaluation_results == None:
+            maxiPlayer = not maxiPlayer
+            game_state = Board.simulate_action(
+                Board.get_actions(game_state, maxiPlayer)[0],
+                maxiPlayer,
+                game_state
+            )
+            evaluation_results = Board.evaluate(game_state)
+        
+        # the game ends in a draw.
+        # We score it as -1.
+        if evaluation_results == -1:
+            return -1
+        
+        # If the game is won by AI, score is +1
+        # elif the game is lost, socre is -2
+        return 1 if evaluation_results == 'O' else -2
 
     # recursive master function
-    def master(node):
+    def master(node, history):
         # THIS node is accessed
         node.count += 1
         
@@ -162,25 +184,27 @@ class MCTS():
         # and is thus the leaf node (best)
         if not len(node.children):
             # STEP 2: NODE EXPANSION
-            node.children = generate_children(node)
+            node.children = MCTS.generate_children(node)
             
             # the best child could be any in this case, 
             # since all activate the base case of 
             # the UCB function
-            best_child = get_best_child(node)
+            best_child = MCTS.get_best_child(node)
 
             # STEP 3: ROLLOUT
-            random_simulation_results = rollout(best_child)
+            random_simulation_results = MCTS.rollout(best_child)
             return random_simulation_results
 
         # STEP 1: TREE TRAVERSAL
         # finding the best child
         # from the current node and appending it to the history
-        best_child = get_best_child(node)
+        best_child = MCTS.get_best_child(node)
         
+        # remembering the best states
+        history.append(best_child)
 
         # recurse! and get me the updation delta
-        delta = master(best_child)
+        delta = MCTS.master(best_child, history)
         
         # STEP 4: BACKPROPOGATION
         # update the score now,
@@ -189,7 +213,11 @@ class MCTS():
         return delta
 
 def mcts():
-    start = Node()
+    # we let the user start
+    start = Node(Board.get_initial_state(), False)
+
+    # history saves the best of the best
+    history = [start]
 
     # controls the number of times
     # we are playing this game, aka, 
@@ -200,7 +228,14 @@ def mcts():
         # this search will give us, to find the 
         # immediate best action. 
         # (eh, just use the board state representations ...)
-        MCTS.master(start)
+        MCTS.master(start, history)
 
     # dump start node to a file for later use.
     # save it with particular board size configuration ...
+    return history
+
+if __name__ == "__main__":
+    history = mcts()
+
+    for node in history:
+        Board.print_board(node.game_state)
