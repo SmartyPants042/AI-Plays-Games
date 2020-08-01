@@ -1,6 +1,8 @@
 from Board import Board
 import math
 
+MAX = float('inf')
+
 iterations = 1
 
 # the balance between exploration 
@@ -12,7 +14,7 @@ CONSTANT = 2
 
 # Each node of the Tree.
 class Node():
-    def __init__(self, game_state):
+    def __init__(self, game_state, maxiPlayer):
         # game state is the board representation of what 
         # this node is. starting node is init with 
         # game board init. Rest of the nodes are init with
@@ -30,9 +32,12 @@ class Node():
 
         # A list of all the children 
         # of the current node
+        # given as (action_taken, new_node)
         self.children = []
 
-# 
+        # Whether the node is maximizer or not
+        self.maxiPlayer = maxiPlayer
+
 class MCTS():
     def upper_confidence_bound(node):
         """
@@ -61,28 +66,40 @@ class MCTS():
         """
         explores all the children of the current node
         returns the best scoring child.
+
+        if the player is maximizer, we return the max
+        if the player is minimizer, we return the min
         """
         
         best_child = None
-        best_score = -float('inf')
-
+        if node.maxiPlayer:
+            best_score = -MAX
+        else:
+            best_score = MAX
 
         if not (node.children):
-            print("Initialising node's children myself ... ")
+            # print("Initialising node's children myself ... ")
             node.children = generate_children(node)
-            print("Done!")
+            # print("Done!")
 
         # iterate through all the children
         for child in node.children:
             score = upper_confidence_bound(child)
 
-            if(score > best_score):
-                best_score = score
-                best_child = child
-
+            # finding the max scoring child
+            if node.maxiPlayer:
+                if(score > best_score):
+                    best_score = score
+                    best_child = child
+            # finding the min scoring child
+            else:
+                if(score < best_score):
+                    best_score = score
+                    best_child = child
+            
             # if any one of the children is uninitialised
             # we pick that in UCB, so we pick it here too.
-            if best_score == float('inf'):
+            if abs(best_score) == float('inf'):
                 break
         
         return best_child
@@ -97,12 +114,23 @@ class MCTS():
                 the current leaf node
         returns:
             a list of all possible game states, aka, children
+            given as tuple of (actions, nodes_generated_by_them)
+            And, the board generated will be depending upon
+            whether the child is maximizer or a minimizer
         """
-        
+
+        # flipping the polarity of the children
+        maxiPlayer = not self.maxiPlayer
         all_actions = get_actions()
         children = []
         for action in all_actions:
-            children.append(simulate_action(action)) 
+            new_game_state = Board.simulate_action(
+                action, 
+                maxiPlayer, 
+                node.game_state
+            )
+            child = Node(new_game_state, maxiPlayer)
+            children.append(child) 
 
         return children
 
@@ -113,6 +141,9 @@ class MCTS():
         inputs:
             node:
                 the current game state
+            maxiPlayer:
+                is the current node maximizer or
+                minimizer
         returns: 
             the final score of the game state
 
@@ -129,7 +160,7 @@ class MCTS():
         # Base Case:
         # the current node has no children 
         # and is thus the leaf node (best)
-        if not (node.children):
+        if not len(node.children):
             # STEP 2: NODE EXPANSION
             node.children = generate_children(node)
             

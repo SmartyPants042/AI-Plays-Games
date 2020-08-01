@@ -1,6 +1,10 @@
+import copy
+
 class Board():
     """
     Provides Utility functions for the board.
+    Assumes 'X' for Opponent
+    Assumes 'O' for AI
     """
     @staticmethod
     def get_actions(board):
@@ -72,6 +76,19 @@ class Board():
     def get_board_size(board):
         # returns the board size for MCTS's saving part
         return (len(board), len(board[0]))
+
+    @staticmethod
+    def simulate_action(action, maxiPlayer, board):
+        """
+        returns the changes board state after
+        performing the action.
+        
+        here, action is (any) one element of the list given
+        by get_actions(board).
+        """
+        new_board = copy.deepcopy(board)
+        new_board[action[0]][action[1]] = 'O' if maxiPlayer else 'X'
+        return new_board 
 
 #################### TESTING ZONE ####################
 # board = [
