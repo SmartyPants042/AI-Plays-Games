@@ -6,6 +6,21 @@ class Board():
     Assumes 'X' for Opponent
     Assumes 'O' for AI
     """
+
+    @staticmethod
+    def get_initial_state():
+        """
+        arranges all the pieces in their init positions 
+        """
+        board = [
+            ['-', '-', '-', '-', ],
+            ['-', '-', '-', '-', ],
+            ['-', '-', '-', '-', ],
+            ['-', '-', '-', '-', ],
+        ]
+        return board
+
+
     @staticmethod
     def get_actions(board, maxiPlayer):
         """
@@ -88,7 +103,7 @@ class Board():
             for item in row:
                 print(item, " | ", end="")
             print()
-        
+        print('====='*len(board[0]) + '=')
         return
 
     @staticmethod
