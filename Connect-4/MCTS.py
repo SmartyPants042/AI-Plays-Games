@@ -1,9 +1,10 @@
 from Board import Board
 import math
+from compress import compressor
 
 MAX = float('inf')
 
-iterations = 10
+iterations = 500
 
 # the balance between exploration 
 # and exploitation. 
@@ -37,6 +38,10 @@ class Node():
 
         # Whether the node is maximizer or not
         self.maxiPlayer = maxiPlayer
+
+        # the 'hash'/ representation used for storing
+        self.hash = compressor(self.game_state)
+
 
 class MCTS():
     def upper_confidence_bound(node):
@@ -186,6 +191,9 @@ class MCTS():
             # STEP 2: NODE EXPANSION
             node.children = MCTS.generate_children(node)
             
+            if not len(node.children):
+                return Board.evaluate(node.game_state)                
+
             # the best child could be any in this case, 
             # since all activate the base case of 
             # the UCB function
@@ -235,7 +243,14 @@ def mcts():
     return history
 
 if __name__ == "__main__":
+    # this guy will store all the nodes as the keys
+    # and all of its children as a list of values
+    tree = {}
+
     history = mcts()
 
-    for node in history:
-        Board.print_board(node.game_state)
+    print(len(history))
+    
+    # for node in history[100:105]:
+    #     Board.print_board(node.game_state)
+    #     print(node.score)

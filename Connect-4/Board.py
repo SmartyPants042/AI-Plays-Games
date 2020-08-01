@@ -13,10 +13,9 @@ class Board():
         arranges all the pieces in their init positions 
         """
         board = [
-            ['-', '-', '-', '-', ],
-            ['-', '-', '-', '-', ],
-            ['-', '-', '-', '-', ],
-            ['-', '-', '-', '-', ],
+            ['-', '-', '-'],
+            ['-', '-', '-'],
+            ['-', '-', '-'],
         ]
         return board
 
