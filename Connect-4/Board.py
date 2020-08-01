@@ -20,7 +20,6 @@ class Board():
         ]
         return board
 
-
     @staticmethod
     def get_actions(board, maxiPlayer):
         """
