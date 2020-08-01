@@ -13,14 +13,14 @@ MAX = float('inf')
 tree = {}
 
 # number of times we want to update the scores
-iterations = 699
+iterations = 500000
 
 # the balance between exploration 
 # and exploitation. 
 # > 1 favour exploration
 # < 1 favour exploration
 # ==1 keep it balanced 
-CONSTANT = 2
+CONSTANT = 5
 
 def convert_to_dict(node):
     return {
@@ -193,7 +193,10 @@ class MCTS():
         
         # If the game is won by AI, score is +1
         # elif the game is lost, socre is -2
-        return 1 if evaluation_results == 'O' else -1
+        if evaluation_results == 'O':
+            return 1
+        else:
+            return -1
 
     # recursive master function
     def master(node):
@@ -208,7 +211,14 @@ class MCTS():
             node.children = MCTS.generate_children(node)
             
             if not len(node.children):
-                return Board.evaluate(node.game_state)                
+                end_game_results = Board.evaluate(node.game_state)
+
+                if end_game_results == 0:
+                    return 0
+                elif end_game_results == 'O':
+                    return 1
+                else:
+                    return -1
 
             # saving the node in the tree, along
             # with its children
@@ -230,7 +240,7 @@ class MCTS():
 
         # recurse! and get me the updation delta
         delta = MCTS.master(best_child)
-        
+
         # STEP 4: BACKPROPOGATION
         # update the score now,
         # added with the results from recursion
@@ -239,11 +249,11 @@ class MCTS():
         tree[node.compressed]['count'] = node.count
         tree[node.compressed]['score'] = node.score
 
-        return delta
+        return int(delta)
 
 def mcts():
     # we let the user start
-    start = Node(Board.get_initial_state(), False)
+    start = Node(Board.get_initial_state(), True)
 
     # controls the number of times
     # we are playing this game, aka, 
