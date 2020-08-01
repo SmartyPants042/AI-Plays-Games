@@ -36,6 +36,7 @@ class Board():
     def evaluate(board):
         """
         returns the winner if any, else None
+        Returns -1 in case the board is filled
         """
         
         # check rows
@@ -62,7 +63,20 @@ class Board():
                 if board[i+3][j] == board[i+2][j+1] == board[i+1][j+2] == board[i][j+3] and board[i][j+3] != '-':
                     return board[i][j+3]
 
-        return None
+        filled = True
+        for row in board:
+            for i in row:
+                if i == '-':
+                    filled = False
+                    break
+            
+            if not filled:
+                break
+
+        if filled:
+            return -1
+        else:
+            return None
 
     @staticmethod
     def print_board(board):
