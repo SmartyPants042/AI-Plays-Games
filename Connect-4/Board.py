@@ -7,11 +7,16 @@ class Board():
     Assumes 'O' for AI
     """
     @staticmethod
-    def get_actions(board):
+    def get_actions(board, maxiPlayer):
         """
         returns a list of tuples of (i, j) positions
-        empty in the board.
+        empty in the board, according to C4.
+
+        This is a case where we have no need to specify
+        which player it is. but, for games such as chess,
+        we will need it in the future...
         """
+        
         actions = []
         # taking the transpose
         transpose = [[ board[i][j] for i in range(len(board))] for j in range(len(board[0]))]
@@ -84,7 +89,7 @@ class Board():
         performing the action.
         
         here, action is (any) one element of the list given
-        by get_actions(board).
+        by get_actions function.
         """
         new_board = copy.deepcopy(board)
         new_board[action[0]][action[1]] = 'O' if maxiPlayer else 'X'
