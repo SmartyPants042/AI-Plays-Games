@@ -13,9 +13,10 @@ class Board():
         arranges all the pieces in their init positions 
         """
         board = [
-            ['-', '-', '-'],
-            ['-', '-', '-'],
-            ['-', '-', '-'],
+            ['-', '-', '-', '-'],
+            ['-', '-', '-', '-'],
+            ['-', '-', '-', '-'],
+            ['-', '-', '-', '-'],
         ]
         return board
 
@@ -49,7 +50,7 @@ class Board():
     def evaluate(board):
         """
         returns the winner if any, else None
-        Returns -1 in case the board is filled
+        Returns 0 in case the board is filled
         """
         
         # check rows
@@ -76,6 +77,7 @@ class Board():
                 if board[i+3][j] == board[i+2][j+1] == board[i+1][j+2] == board[i][j+3] and board[i][j+3] != '-':
                     return board[i][j+3]
 
+        # checking for filled
         filled = True
         for row in board:
             for i in row:
@@ -85,9 +87,10 @@ class Board():
             
             if not filled:
                 break
-
+        
+        # handling filling
         if filled:
-            return -1
+            return 0
         else:
             return None
 

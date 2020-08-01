@@ -1,10 +1,19 @@
+# helper functions/classes
 from Board import Board
-import math
 from compress import compressor
+
+# utility functions
+import math
+import json
 
 MAX = float('inf')
 
-iterations = 500
+# this guy will store all the nodes as the keys
+# and all of its children as a list of values
+tree = {}
+
+# number of times we want to update the scores
+iterations = 699
 
 # the balance between exploration 
 # and exploitation. 
@@ -12,6 +21,14 @@ iterations = 500
 # < 1 favour exploration
 # ==1 keep it balanced 
 CONSTANT = 2
+
+def convert_to_dict(node):
+    return {
+        'score': node.score,
+        'count': node.count,
+        'children': [compressor(child.game_state) for child in node.children],
+    }
+
 
 # Each node of the Tree.
 class Node():
@@ -39,9 +56,8 @@ class Node():
         # Whether the node is maximizer or not
         self.maxiPlayer = maxiPlayer
 
-        # the 'hash'/ representation used for storing
-        self.hash = compressor(self.game_state)
-
+        # the compressed representation used for storing
+        self.compressed = compressor(self.game_state)
 
 class MCTS():
     def upper_confidence_bound(node):
@@ -171,16 +187,16 @@ class MCTS():
             evaluation_results = Board.evaluate(game_state)
         
         # the game ends in a draw.
-        # We score it as -1.
-        if evaluation_results == -1:
-            return -1
+        # We score it as 0.
+        if evaluation_results == 0:
+            return 0
         
         # If the game is won by AI, score is +1
         # elif the game is lost, socre is -2
-        return 1 if evaluation_results == 'O' else -2
+        return 1 if evaluation_results == 'O' else -1
 
     # recursive master function
-    def master(node, history):
+    def master(node):
         # THIS node is accessed
         node.count += 1
         
@@ -193,6 +209,10 @@ class MCTS():
             
             if not len(node.children):
                 return Board.evaluate(node.game_state)                
+
+            # saving the node in the tree, along
+            # with its children
+            tree[node.compressed] = convert_to_dict(node)
 
             # the best child could be any in this case, 
             # since all activate the base case of 
@@ -207,25 +227,23 @@ class MCTS():
         # finding the best child
         # from the current node and appending it to the history
         best_child = MCTS.get_best_child(node)
-        
-        # remembering the best states
-        history.append(best_child)
 
         # recurse! and get me the updation delta
-        delta = MCTS.master(best_child, history)
+        delta = MCTS.master(best_child)
         
         # STEP 4: BACKPROPOGATION
         # update the score now,
         # added with the results from recursion
         node.score += delta
+
+        tree[node.compressed]['count'] = node.count
+        tree[node.compressed]['score'] = node.score
+
         return delta
 
 def mcts():
     # we let the user start
     start = Node(Board.get_initial_state(), False)
-
-    # history saves the best of the best
-    history = [start]
 
     # controls the number of times
     # we are playing this game, aka, 
@@ -236,21 +254,15 @@ def mcts():
         # this search will give us, to find the 
         # immediate best action. 
         # (eh, just use the board state representations ...)
-        MCTS.master(start, history)
+        MCTS.master(start)
 
     # dump start node to a file for later use.
     # save it with particular board size configuration ...
-    return history
+    return
 
 if __name__ == "__main__":
-    # this guy will store all the nodes as the keys
-    # and all of its children as a list of values
-    tree = {}
+    mcts()
+    print(len(tree))
 
-    history = mcts()
-
-    print(len(history))
-    
-    # for node in history[100:105]:
-    #     Board.print_board(node.game_state)
-    #     print(node.score)
+    with open('tree_of_ai.json', 'w+') as f:
+        json.dump(tree, f, indent=4)
