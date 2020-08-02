@@ -18,6 +18,16 @@ class Node():
 
 class MCTS():
     def ucb(node):
+        """
+        Returns the Upper Confidence Bound Score of the node.
+
+        input:
+            node:
+                the Node object
+        return:
+            None if the node is unexplored
+            value if the node is explored
+        """
         if node.count == 0:
             return None
 
@@ -26,6 +36,16 @@ class MCTS():
         return exploit + SCALAR*explore
 
     def get_best_child(node):
+        """
+        Returns the best child of the node according to the
+        node being a maximizer/minimizer
+
+        input:
+            node:
+                the Node object
+        return:
+            the best child for that particular node
+        """
         best_child = None
         if node.maxiPlayer:
             best_score = -MAX
@@ -50,6 +70,16 @@ class MCTS():
         return best_child
 
     def rollout(node):
+        """
+        Takes a random series of moves from the given node,
+        till the game ends: either in a win/loss or a draw.
+        
+        input:
+            node:
+                the Node object
+        return:
+            the analysis of the end-game-state results
+        """
         board = node.game_state
         results = Board.evaluate(board)
         maxiPlayer = node.maxiPlayer
@@ -63,6 +93,10 @@ class MCTS():
         return MCTS.analyse_results(results)
 
     def analyse_results(results):
+        """        
+        Used for extracting out the Board's generic evaluation
+        function.
+        """
         if results == None:
             return None
         if results == 0:
@@ -72,6 +106,14 @@ class MCTS():
         return 1
 
     def generate_children(node):
+        """
+        Generates new child nodes for the given node
+        input:
+            node:
+                the Node object
+        return:
+            None
+        """
         actions = Board.get_actions(node.game_state, node.maxiPlayer)
         children = []
         maxiPlayer = not node.maxiPlayer
@@ -90,6 +132,27 @@ class MCTS():
         return
 
     def recurse(node):
+        """
+        The main recursive function, follows the steps of
+        
+        1. Traversing the tree:
+                If the current node has children already, 
+                then we can pick the best one of them (according
+                to the UCB scoring). And then, recurse further,
+                till we reach a leaf-node. That leaf will be the best
+                of that particular iteration.
+
+        2. Expanding new children nodes:
+                (explained above)
+        
+        3. Rollout:
+                (explained above)
+        
+        4. Backpropogation:
+                When it reaches an end-game-state, it returns the
+                analysed evaluations of the board, 
+        """
+
         results = Board.evaluate(node.game_state)
         if results != None:
             delta = MCTS.analyse_results(results)
@@ -117,6 +180,27 @@ class MCTS():
         return delta
 
     def main(board=Board.get_initial_state(), verbose="v"):
+        """
+        The function that controls it all.
+        input:
+            board:
+                the board to get a new move on. Is init with
+                the Board's function (if needed)
+            verbose:
+                '' - no output on the screen
+                'v' - displays the progress bar
+                'vv' - displays the scores of each of the
+                    immediate board states
+
+        return:
+            the best future board, having the maximum score.
+
+        NOTE:
+            the start_node is essentially the minimizer node, 
+            but letting it control means that the nodes with lesser
+            values get explored more. So, we basically iterate over
+            all of its children, and then get their max.
+        """
         start_time = time.process_time()
         
         start_node = Node(board, False)
