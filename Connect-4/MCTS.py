@@ -223,8 +223,6 @@ class MCTS():
             if not len(node.children):
                 return MCTS.analysing_result(results)
 
-            # saving the node in the tree, along
-            # with its children
             tree[node.compressed] = convert_to_dict(node)
 
             # the best child could be any in this case, 
@@ -249,10 +247,11 @@ class MCTS():
         # added with the results from recursion
         node.score += delta
 
-        tree[node.compressed]['count'] = node.count
-        tree[node.compressed]['score'] = node.score
+        # saving the node in the tree, along
+        # with its children
+        tree[node.compressed] = convert_to_dict(node)
 
-        return int(delta)
+        return delta
 
     def mcts(
         starting_board=Board.get_initial_state(),
@@ -307,18 +306,25 @@ class MCTS():
         if verbose:
             print()
 
-        final_board = MCTS.find_the_one(compressor(start_node.game_state))
-        if verbose:
-            MCTS.print_stats(start_time, final_board)
+        try:
+            final_board = MCTS.find_the_one(compressor(start_node.game_state))
+        except:
+            final_board = starting_board
 
         if save_tree:
             with open("tree.json", 'w+') as f:
                 json.dump(tree, f, indent=4)
         
+        if verbose:
+            MCTS.print_stats(start_time, final_board)
         return final_board
 
     def find_the_one(board):
-        # board is the compressed key of the board
+        """
+        board is the compressed key of the board
+
+        returns the board of the best child
+        """
         best_score = -MAX
         best_child = None
         for compressed_child in tree[board]['children']:
@@ -335,10 +341,16 @@ class MCTS():
         print(f"Explored: {len(tree)} nodes")
         time_taken = round(time.process_time() - start_time, 2)
         print(f"Taken {time_taken}s to Execute")
-        print("Best Score: ", tree[compressor(final_board)]['score'])
+        try:
+            print("Best Score: ", tree[compressor(final_board)]['score'])
+        except:
+            print("Node remains unexplored, since game-over")
         return
 
     def analysing_result(results):
+        """
+        returns the score according to the evaluations
+        """
         if results == None:
             return None
 
@@ -355,15 +367,15 @@ class MCTS():
 if __name__ == "__main__":
     board = [
         ['-', '-', '-', '-',],
-        ['-', 'X', '-', 'O',],
+        ['-', 'X', '-', '-',],
         ['-', 'X', '-', 'O',],
         ['-', 'X', '-', 'O',],
     ]  
-    Board.print_board(MCTS.mcts(starting_board=board, verbose=True))
+    Board.print_board(MCTS.mcts(starting_board=board, verbose=True, save_tree=True))
 
     # key = compressor(board)
+    # print(key)
     # while key:
+    #     Board.print_board(board)
     #     board = MCTS.find_the_one(key)
     #     key = compressor(board)
-
-    #     Board.print_board(board)
