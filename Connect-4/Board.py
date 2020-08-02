@@ -115,7 +115,7 @@ class Board():
     @staticmethod
     def simulate_action(action, maxiPlayer, board):
         """
-        returns the changes board state after
+        returns the changed board state after
         performing the action.
         
         here, action is (any) one element of the list given
