@@ -1,11 +1,12 @@
 from Board import Board
 from compress import compressor, decompressor
 
+import time
 import random
 import math
 MAX = float('inf')
-SCALAR = 5
-ITERATIONS = 50000
+SCALAR = 0.1
+ITERATIONS = 696
 
 class Node():
     def __init__(self, board, maxiPlayer):
@@ -67,9 +68,9 @@ class MCTS():
         if results == None:
             return None
         if results == 0:
-            return 0
-        if results == 'X':
             return -1
+        if results == 'X':
+            return -2
         return 1
 
     def generate_children(node):
@@ -117,17 +118,31 @@ class MCTS():
         node.count += 1
         return delta
 
-    def main(board=Board.get_initial_state()):
+    def main(board=Board.get_initial_state(), verbose=True):
+        start_time = time.process_time()
+        
         start_node = Node(board, False)
+        MCTS.generate_children(start_node)
+        new_start_nodes = start_node.children
 
         for i in range(ITERATIONS):
-            MCTS.recurse(start_node)
+            for start in new_start_nodes:
+                MCTS.recurse(start)
+            if verbose:
+                done_bar_length = round(i/ITERATIONS*50)
+                length_left = 50 - done_bar_length
+                print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
+        
+        if verbose:
+            print()
 
         best_child = None
         best_score = -MAX
         for child in start_node.children:
             # Board.print_board(child.game_state)
-            print(child.score, child.count)
+            
+            if verbose:
+                print(child.score, child.count)
 
             if child.score > best_score:
                 best_score = child.score
@@ -138,9 +153,10 @@ class MCTS():
 
 #################### TESTING ZONE ####################
 board = [
-    ['-', '-', '-', '-',],
-    ['-', 'X', '-', '-',],
-    ['-', 'X', '-', 'O',],
-    ['-', 'X', '-', 'O',],
+    ['-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-'],
+    ['-', 'X', '-', '-', '-'],
+    ['-', 'X', '-', 'O', '-'],
+    ['-', 'X', '-', 'O', '-'],
 ]  
-MCTS.main(board=board)
+MCTS.main(board=board, verbose=True)
