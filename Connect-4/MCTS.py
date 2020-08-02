@@ -1,10 +1,11 @@
 # helper functions/classes
 from Board import Board
-from compress import compressor
+from compress import compressor, decompressor
 
 # utility functions
 import math
 import json
+import time
 
 MAX = float('inf')
 
@@ -13,14 +14,14 @@ MAX = float('inf')
 tree = {}
 
 # number of times we want to update the scores
-iterations = 500000
+iterations = 9999
 
 # the balance between exploration 
 # and exploitation. 
 # > 1 favour exploration
 # < 1 favour exploration
 # ==1 keep it balanced 
-CONSTANT = 5
+CONSTANT = 2
 
 def convert_to_dict(node):
     return {
@@ -28,7 +29,6 @@ def convert_to_dict(node):
         'count': node.count,
         'children': [compressor(child.game_state) for child in node.children],
     }
-
 
 # Each node of the Tree.
 class Node():
@@ -251,28 +251,56 @@ class MCTS():
 
         return int(delta)
 
-def mcts():
-    # we let the user start
-    start = Node(Board.get_initial_state(), True)
+    def mcts(starting_board=Board.get_initial_state(), verbose=True):
+        # marks the start of execution time
+        start_time = time.process_time()
 
-    # controls the number of times
-    # we are playing this game, aka, 
-    # the number of simulations
-    for i in range(iterations):
+        start_node = Node(starting_board, False)
 
-        # for each iteration, we will store the best path
-        # this search will give us, to find the 
-        # immediate best action. 
-        # (eh, just use the board state representations ...)
-        MCTS.master(start)
+        # for displaying the progress-bar
+        total_bar_length = 50
 
-    # dump start node to a file for later use.
-    # save it with particular board size configuration ...
-    return
+        # controls the number of times
+        # we are playing this game, aka, 
+        # the number of simulations
+        for i in range(iterations):
 
-if __name__ == "__main__":
-    mcts()
-    print(len(tree))
+            # for each iteration, we will store the best path
+            # this search will give us, to find the 
+            # immediate best action. 
+            # (eh, just use the board state representations ...)
+            MCTS.master(start_node)
 
-    with open('tree_of_ai.json', 'w+') as f:
-        json.dump(tree, f, indent=4)
+            # for displaying the progress-bar
+            done_bar_length = round(i/iterations*50)
+            length_left = total_bar_length - done_bar_length
+
+            if verbose:
+                print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
+        if verbose:
+            print()
+
+        final_board = MCTS.find_the_one(compressor(start_node.game_state))
+        if verbose:
+            MCTS.print_stats(start_time)
+        return final_board
+
+    def find_the_one(board):
+        best_score = -MAX
+        best_child = None
+        for compressed_child in tree[board]['children']:
+            if best_score < tree[compressed_child]['score']:
+                best_child = compressed_child
+        
+        return decompressor(best_child)
+
+    def print_stats(start_time):
+        # Statistics
+        print(f"Explored: {len(tree)} nodes")
+        time_taken = round(time.process_time() - start_time, 2)
+        print(f"Taken {time_taken}s to Execute")
+        return
+
+#################### TESTING ZONE ####################
+# if __name__ == "__main__":
+#     Board.print_board(MCTS.mcts(verbose=True))
