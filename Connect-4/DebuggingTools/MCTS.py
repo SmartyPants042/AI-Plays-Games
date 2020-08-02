@@ -364,14 +364,14 @@ class MCTS():
         return -1
 
 ################### TESTING ZONE ####################
-if __name__ == "__main__":
-    board = [
-        ['-', '-', '-', '-',],
-        ['-', 'X', '-', '-',],
-        ['-', 'X', '-', 'O',],
-        ['-', 'X', '-', 'O',],
-    ]  
-    Board.print_board(MCTS.mcts(starting_board=board, verbose=True, save_tree=True))
+# if __name__ == "__main__":
+#     board = [
+#         ['-', '-', '-', '-',],
+#         ['-', 'X', '-', '-',],
+#         ['-', 'X', '-', 'O',],
+#         ['-', 'X', '-', 'O',],
+#     ]  
+#     Board.print_board(MCTS.mcts(starting_board=board, verbose=True, save_tree=True))
 
     # key = compressor(board)
     # print(key)
