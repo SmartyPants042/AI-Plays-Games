@@ -1,5 +1,4 @@
 from Board import Board
-from compress import compressor, decompressor
 
 import time
 import random
@@ -16,7 +15,6 @@ class Node():
 
         self.count = 0        
         self.score = 0        
-        self.value = compressor(board)
 
 class MCTS():
     def ucb(node):
@@ -148,15 +146,14 @@ class MCTS():
                 best_score = child.score
                 best_child = child
 
-        Board.print_board(best_child.game_state)
-
+        return best_child.game_state
 
 #################### TESTING ZONE ####################
-board = [
-    ['-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-'],
-    ['-', 'X', '-', '-', '-'],
-    ['-', 'X', '-', 'O', '-'],
-    ['-', 'X', '-', 'O', '-'],
-]  
-MCTS.main(board=board, verbose=True)
+# board = [
+#     ['-', '-', '-', '-', '-'],
+#     ['-', '-', '-', '-', '-'],
+#     ['-', 'X', '-', '-', '-'],
+#     ['-', 'X', '-', 'O', '-'],
+#     ['-', 'X', '-', 'O', '-'],
+# ]  
+# MCTS.main(board=board, verbose=True)

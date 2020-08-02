@@ -1,4 +1,15 @@
-from MCTS import MCTS
+from ProductionBuild import MCTS
+from Board import Board
 
 def move(board):
-    return MCTS.mcts(board, save_tree=True)
+    return MCTS.main(board, verbose=True)
+    
+################### TESTING ZONE ####################
+
+# board = [
+#     ['-', '-', '-', '-',],
+#     ['-', 'X', '-', '-',],
+#     ['-', 'X', '-', 'O',],
+#     ['-', 'X', '-', 'O',],
+# ] 
+# Board.print_board(move(board))
