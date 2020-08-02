@@ -116,7 +116,7 @@ class MCTS():
         node.count += 1
         return delta
 
-    def main(board=Board.get_initial_state(), verbose=True):
+    def main(board=Board.get_initial_state(), verbose="v"):
         start_time = time.process_time()
         
         start_node = Node(board, False)
@@ -126,12 +126,12 @@ class MCTS():
         for i in range(ITERATIONS):
             for start in new_start_nodes:
                 MCTS.recurse(start)
-            if verbose:
+            if verbose == "v" or verbose == "vv":
                 done_bar_length = round(i/ITERATIONS*50)
                 length_left = 50 - done_bar_length
                 print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
         
-        if verbose:
+        if verbose == "v" or verbose == "vv":
             print()
 
         best_child = None
@@ -139,7 +139,7 @@ class MCTS():
         for child in start_node.children:
             # Board.print_board(child.game_state)
             
-            if verbose:
+            if verbose == "vv":
                 print(child.score, child.count)
 
             if child.score > best_score:
