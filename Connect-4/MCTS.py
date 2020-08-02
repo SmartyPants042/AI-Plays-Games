@@ -13,9 +13,6 @@ MAX = float('inf')
 # and all of its children as a list of values
 tree = {}
 
-# number of times we want to update the scores
-iterations = 9999
-
 # the balance between exploration 
 # and exploitation. 
 # > 1 favour exploration
@@ -251,7 +248,31 @@ class MCTS():
 
         return int(delta)
 
-    def mcts(starting_board=Board.get_initial_state(), verbose=True):
+    def mcts(
+        starting_board=Board.get_initial_state(),
+        verbose=True,
+        save_tree=False,
+        iterations=999):
+        """
+        returns the best next state for the board, given the current state.
+
+        input:
+            starting_board:
+                The board on which to perform the seach on.
+            verbose:
+                Whether to display the progress bars and execution times
+                or not.
+            save_tree:
+                Saves the tree in JSON format for future retrieval,
+                if needed.
+            iterations:
+                number of times to simulate the search. More the
+                #iters, more the time it will take.
+                Default set as 9999
+        return:
+            the final board with the best results from the simulation.
+        """
+        
         # marks the start of execution time
         start_time = time.process_time()
 
@@ -283,6 +304,11 @@ class MCTS():
         final_board = MCTS.find_the_one(compressor(start_node.game_state))
         if verbose:
             MCTS.print_stats(start_time)
+
+        if save:
+            with open("tree.json", 'w+') as f:
+                json.dump(tree, f, indent=4)
+        
         return final_board
 
     def find_the_one(board):
@@ -303,4 +329,4 @@ class MCTS():
 
 #################### TESTING ZONE ####################
 # if __name__ == "__main__":
-#     Board.print_board(MCTS.mcts(verbose=True))
+#     Board.print_board(MCTS.mcts(verbose=True, save_tree=True))
