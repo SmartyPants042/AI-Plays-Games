@@ -9,6 +9,8 @@ import time
 
 MAX = float('inf')
 
+iterations = 9999
+
 # this guy will store all the nodes as the keys
 # and all of its children as a list of values
 tree = {}
@@ -200,22 +202,26 @@ class MCTS():
         # THIS node is accessed
         node.count += 1
         
-        # Base Case:
-        # the current node has no children 
+        # Base Cases:
+        # #1 the game has ended due to someone winning
+        # OR, 
+        # #2 the current node has no children 
         # and is thus the leaf node (best)
+        
+        # BASE CASE #1
+        results = Board.evaluate(node.game_state)
+        if results != None:
+            return MCTS.analysing_result(results)
+
+        # BASE CASE #2
         if not len(node.children):
             # STEP 2: NODE EXPANSION
             node.children = MCTS.generate_children(node)
             
+            # if can't be expanded(filled board)
+            # or, can be expanded, but game-over
             if not len(node.children):
-                end_game_results = Board.evaluate(node.game_state)
-
-                if end_game_results == 0:
-                    return 0
-                elif end_game_results == 'O':
-                    return 1
-                else:
-                    return -1
+                return MCTS.analysing_result(results)
 
             # saving the node in the tree, along
             # with its children
@@ -252,7 +258,7 @@ class MCTS():
         starting_board=Board.get_initial_state(),
         verbose=True,
         save_tree=False,
-        iterations=999):
+        iterations=iterations):
         """
         returns the best next state for the board, given the current state.
 
@@ -272,7 +278,7 @@ class MCTS():
         return:
             the final board with the best results from the simulation.
         """
-        
+
         # marks the start of execution time
         start_time = time.process_time()
 
@@ -303,30 +309,61 @@ class MCTS():
 
         final_board = MCTS.find_the_one(compressor(start_node.game_state))
         if verbose:
-            MCTS.print_stats(start_time)
+            MCTS.print_stats(start_time, final_board)
 
-        if save:
+        if save_tree:
             with open("tree.json", 'w+') as f:
                 json.dump(tree, f, indent=4)
         
         return final_board
 
     def find_the_one(board):
+        # board is the compressed key of the board
         best_score = -MAX
         best_child = None
         for compressed_child in tree[board]['children']:
-            if best_score < tree[compressed_child]['score']:
+            score = tree[compressed_child]['score']
+            if best_score < score:
                 best_child = compressed_child
+                best_score = score
         
-        return decompressor(best_child)
+        best_board = decompressor(best_child)
+        return best_board
 
-    def print_stats(start_time):
+    def print_stats(start_time, final_board):
         # Statistics
         print(f"Explored: {len(tree)} nodes")
         time_taken = round(time.process_time() - start_time, 2)
         print(f"Taken {time_taken}s to Execute")
+        print("Best Score: ", tree[compressor(final_board)]['score'])
         return
 
-#################### TESTING ZONE ####################
-# if __name__ == "__main__":
-#     Board.print_board(MCTS.mcts(verbose=True, save_tree=True))
+    def analysing_result(results):
+        if results == None:
+            return None
+
+        # draw        
+        if results == 0:
+            return 0
+        # AI wins
+        if results == 'O':
+            return 1
+        # player wins
+        return -1
+
+################### TESTING ZONE ####################
+if __name__ == "__main__":
+    board = [
+        ['-', '-', '-', '-',],
+        ['-', 'X', '-', 'O',],
+        ['-', 'X', '-', 'O',],
+        ['-', 'X', '-', 'O',],
+    ]  
+    Board.print_board(MCTS.mcts(starting_board=board, verbose=True))
+
+    # key = compressor(board)
+    # while key:
+    #     board = MCTS.find_the_one(key)
+    #     key = compressor(board)
+
+    #     Board.print_board(board)
