@@ -3,9 +3,10 @@ from Board import Board
 import time
 import random
 import math
+
 MAX = float('inf')
 SCALAR = 0.1
-ITERATIONS = 696
+ITERATIONS = 969
 
 class Node():
     def __init__(self, board, maxiPlayer):
@@ -211,8 +212,8 @@ class MCTS():
         new_start_nodes = start_node.children
 
         for i in range(ITERATIONS):
-            for start in new_start_nodes:
-                MCTS.recurse(start)
+            for start_node in new_start_nodes:
+                MCTS.recurse(start_node)
             if verbose == "v" or verbose == "vv":
                 done_bar_length = round(i/ITERATIONS*50)
                 length_left = 50 - done_bar_length
@@ -241,15 +242,14 @@ class MCTS():
                 if child.score < best_score:
                     best_score = child.score
                     best_child = child
-
         return best_child.game_state
 
 #################### TESTING ZONE ####################
-# board = [
-#     ['-', '-', '-', '-', '-'],
-#     ['-', '-', '-', '-', '-'],
-#     ['-', 'X', '-', '-', '-'],
-#     ['-', 'X', '-', 'O', '-'],
-#     ['-', 'X', '-', 'O', '-'],
-# ]  
-# MCTS.main(board=board, verbose=True)
+board = [
+    ['-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-'],
+    ['-', 'X', '-', '-', '-'],
+    ['-', 'X', '-', 'O', '-'],
+    ['-', 'X', '-', 'O', '-'],
+]  
+MCTS.main(board=board, verbose='v')
