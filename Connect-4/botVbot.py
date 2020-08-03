@@ -1,6 +1,5 @@
 from Board import Board
 from AI import move as ai_move
-from player import move as player_move
 
 import random
 
@@ -30,18 +29,26 @@ while True:
         break
 
     if player:
-        action = player_move(board)
-        board[action[0]][action[1]] = 'X'
-
+        print("X's Turn: Thinking ... ")
+        
+        if count < 4:
+            action = random_move(board)
+            board[action[0]][action[1]] = 'X'
+        else:
+            board = ai_move(board, human_player=True)
+        
+        print("Got it.")
     else:
-        print("Thinking ... ")
+        print("O's Turn: Thinking ... ")
+        
         if count < 4:
             action = random_move(board)
             board[action[0]][action[1]] = 'O'
         else:
-            board = ai_move(board)
+            board = ai_move(board, human_player=False)
+        
         print("Got it.")
+    
     # switching the player
     player = not player
     count += 1
-    

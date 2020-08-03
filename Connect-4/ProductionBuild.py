@@ -179,7 +179,7 @@ class MCTS():
         node.count += 1
         return delta
 
-    def main(board=Board.get_initial_state(), verbose="v"):
+    def main(board=Board.get_initial_state(), verbose="v", human_player=False):
         """
         The function that controls it all.
         input:
@@ -191,7 +191,10 @@ class MCTS():
                 'v' - displays the progress bar
                 'vv' - displays the scores of each of the
                     immediate board states
-
+            human_player:
+                False for AI playing, 
+                True for Human playing 
+                (can be used for self-play game-simulations.)
         return:
             the best future board, having the maximum score.
 
@@ -203,7 +206,7 @@ class MCTS():
         """
         start_time = time.process_time()
         
-        start_node = Node(board, False)
+        start_node = Node(board, human_player)
         MCTS.generate_children(start_node)
         new_start_nodes = start_node.children
 
@@ -219,16 +222,25 @@ class MCTS():
             print()
 
         best_child = None
-        best_score = -MAX
+        if not human_player:
+            best_score = -MAX
+        else:
+            best_score = MAX
+
         for child in start_node.children:
             # Board.print_board(child.game_state)
             
             if verbose == "vv":
                 print(child.score, child.count)
 
-            if child.score > best_score:
-                best_score = child.score
-                best_child = child
+            if not human_player:
+                if child.score > best_score:
+                    best_score = child.score
+                    best_child = child
+            else:
+                if child.score < best_score:
+                    best_score = child.score
+                    best_child = child
 
         return best_child.game_state
 

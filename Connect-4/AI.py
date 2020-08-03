@@ -1,8 +1,8 @@
 from ProductionBuild import MCTS
 from Board import Board
 
-def move(board):
-    return MCTS.main(board, verbose='v')
+def move(board, human_player):
+    return MCTS.main(board, verbose='v', human_player=human_player)
     
 ################### TESTING ZONE ####################
 
