@@ -5,7 +5,7 @@ import random
 import math
 
 MAX = float('inf')
-SCALAR = 0.1
+SCALAR = 1
 ITERATIONS = 969
 
 class Node():
@@ -212,8 +212,8 @@ class MCTS():
         new_start_nodes = start_node.children
 
         for i in range(ITERATIONS):
-            for start_node in new_start_nodes:
-                MCTS.recurse(start_node)
+            for start in new_start_nodes:
+                MCTS.recurse(start)
             if verbose == "v" or verbose == "vv":
                 done_bar_length = round(i/ITERATIONS*50)
                 length_left = 50 - done_bar_length
@@ -242,6 +242,7 @@ class MCTS():
                 if child.score < best_score:
                     best_score = child.score
                     best_child = child
+
         return best_child.game_state
 
 #################### TESTING ZONE ####################
@@ -252,4 +253,4 @@ class MCTS():
 #     ['-', 'X', '-', 'O', '-'],
 #     ['-', 'X', '-', 'O', '-'],
 # ]  
-# MCTS.main(board=board, verbose='v')
+# Board.print_board(MCTS.main(board=board, verbose='v'))
