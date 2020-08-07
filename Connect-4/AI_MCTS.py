@@ -1,4 +1,4 @@
-from ProductionBuild import MCTS
+from MCTS import MCTS
 from Board import Board
 
 def move(board, human_player=False):

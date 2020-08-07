@@ -1,7 +1,9 @@
 from Board import Board
-from AI import move as ai_move
+from AI_MCTS import move as mcts_move
+from AI_Minimax import move as minimax_move
 
 import random
+import time
 
 # variables init
 player = True
@@ -30,24 +32,14 @@ while True:
 
     if player:
         print("X's Turn: Thinking ... ")
-        
-        if count < 4:
-            action = random_move(board)
-            board[action[0]][action[1]] = 'X'
-        else:
-            board = ai_move(board, human_player=True)
-        
-        print("Got it.")
+        start = time.process_time()
+        board = minimax_move(board, human_player=True)
+        print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
     else:
         print("O's Turn: Thinking ... ")
-        
-        if count < 4:
-            action = random_move(board)
-            board[action[0]][action[1]] = 'O'
-        else:
-            board = ai_move(board, human_player=False)
-        
-        print("Got it.")
+        start = time.process_time()
+        board = mcts_move(board, human_player=False)
+        print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
     
     # switching the player
     player = not player

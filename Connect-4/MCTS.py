@@ -6,7 +6,7 @@ import math
 
 MAX = float('inf')
 SCALAR = 1
-ITERATIONS = 969
+ITERATIONS = 1600
 
 class Node():
     def __init__(self, board, maxiPlayer):
