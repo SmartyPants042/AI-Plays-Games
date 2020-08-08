@@ -1,5 +1,6 @@
 from Board import Board
-from AI import move as ai_move
+from AI_MCTS import move as mcts_move
+from AI_Minimax import move as minimax_move 
 from player import move as player_move
 
 import random
@@ -39,7 +40,7 @@ while True:
             action = random_move(board)
             board[action[0]][action[1]] = 'O'
         else:
-            board = ai_move(board)
+            board = mcts_move(board)
         print("Got it.")
     # switching the player
     player = not player

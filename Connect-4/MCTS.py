@@ -6,7 +6,7 @@ import math
 
 MAX = float('inf')
 SCALAR = 1
-ITERATIONS = 1600
+ITERATIONS = 969
 
 class Node():
     def __init__(self, board, maxiPlayer):
@@ -49,9 +49,9 @@ class MCTS():
         """
         best_child = None
         if node.maxiPlayer:
-            best_score = -MAX
-        else:
             best_score = +MAX
+        else:
+            best_score = -MAX
 
         for child in node.children:
             score = MCTS.ucb(child)
@@ -59,12 +59,13 @@ class MCTS():
             if score == None:
                 best_child = child
                 break
+
             if node.maxiPlayer:
-                if score > best_score:
+                if score < best_score:
                     best_score = score
                     best_child = child
             else:
-                if score < best_score:
+                if score > best_score:
                     best_score = score
                     best_child = child
         
@@ -101,9 +102,9 @@ class MCTS():
         if results == None:
             return None
         if results == 0:
-            return -1
-        if results == 'X':
             return -2
+        if results == 'X':
+            return -10
         return 1
 
     def generate_children(node):
@@ -229,10 +230,9 @@ class MCTS():
             best_score = MAX
 
         for child in start_node.children:
-            # Board.print_board(child.game_state)
             
             if verbose == "vv":
-                print(child.score, child.count)
+                print(child.score, end="    ")
 
             if not human_player:
                 if child.score > best_score:
@@ -242,15 +242,52 @@ class MCTS():
                 if child.score < best_score:
                     best_score = child.score
                     best_child = child
-
+        
+        if verbose == "vv":
+            print()
+            MCTS.get_chosen_path(best_child)
         return best_child.game_state
 
+    def get_chosen_path(node):
+        """
+        Prints the chosen states of boards, giving the 
+        best score overall.
+        """
+        print("PATH INIT\n.........")
+        Board.print_board(node.game_state)
+
+        while node.children:
+            if node.maxiPlayer:
+                best_score = -MAX
+            else:
+                best_score = MAX
+            best_child = None
+
+            print(f"Parent is: {node.maxiPlayer}", end="\n")
+            for child in node.children:
+                print("{:4}".format(child.score), end=' ')
+                if node.maxiPlayer:
+                    if child.score > best_score:
+                        best_score = child.score
+                        best_child = child
+                else:
+                    if child.score < best_score:
+                        best_score = child.score
+                        best_child = child
+            print()
+            Board.print_board(best_child.game_state)
+            node = best_child
+        
+        Board.print_board(node.game_state)
+        print("PATH EXIT")
+        return
 #################### TESTING ZONE ####################
 # board = [
-#     ['-', '-', '-', '-', '-'],
-#     ['-', '-', '-', '-', '-'],
-#     ['-', 'X', '-', '-', '-'],
-#     ['-', 'X', '-', 'O', '-'],
-#     ['-', 'X', '-', 'O', '-'],
+#     ['-', '-', '-', '-', '-', '-', '-'],
+#     ['-', '-', '-', '-', '-', '-', '-'],
+#     ['-', '-', '-', '-', '-', '-', '-'],
+#     ['-', 'O', '-', '-', '-', '-', 'X'],
+#     ['X', 'O', 'O', 'O', '-', '-', 'X'],
+#     ['O', 'X', 'X', 'O', '-', 'X', 'X'],
 # ]  
-# Board.print_board(MCTS.main(board=board, verbose='v'))
+# Board.print_board(MCTS.main(board=board, verbose='vv'))
