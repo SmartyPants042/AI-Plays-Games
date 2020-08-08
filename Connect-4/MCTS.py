@@ -14,7 +14,7 @@ class Node():
         self.maxiPlayer = maxiPlayer
         self.children = []
 
-        self.count = 0        
+        self.count = 0  
         self.score = 0        
 
 class MCTS():
