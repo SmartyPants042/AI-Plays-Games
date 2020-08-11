@@ -6,11 +6,11 @@ from player import move as player_move
 import random
 import time
 
-def random_move(board, human_player):
-    actions = Board.get_actions(board, human_player)
+def random_move(board, player_x):
+    actions = Board.get_actions(board, player_x)
     action = random.choice(actions)
 
-    if human_player:
+    if player_x:
         board[action[0]][action[1]] = 'X'
     else:
         board[action[0]][action[1]] = 'O'
@@ -89,14 +89,7 @@ def print_menu():
 def game_play(player1, player2):
     # variables init
     player = True
-    board = [
-        ['-', '-', '-', '-', '-', '-', '-'],
-        ['-', '-', '-', '-', '-', '-', '-'],
-        ['-', '-', '-', '-', '-', '-', '-'],
-        ['-', '-', '-', '-', '-', '-', '-'],
-        ['-', '-', '-', '-', '-', '-', '-'],
-        ['-', '-', '-', '-', '-', '-', '-'],
-    ]
+    board = Board.get_initial_state()
 
     while True:
         Board.print_board(board)
@@ -111,12 +104,12 @@ def game_play(player1, player2):
         if player:
             print("X's Turn: Thinking ... ")
             start = time.process_time()
-            board = player1(board, human_player=True)
+            board = player1(board, player_x=True)
             print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
         else:
             print("O's Turn: Thinking ... ")
             start = time.process_time()
-            board = player2(board, human_player=False)
+            board = player2(board, player_x=False)
             print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
         
         # switching the player
