@@ -5,7 +5,8 @@ def move(board, human_player=True):
     # assuming the case that human_player == True ONLY.
 
     action = AI.move(board)
-    board[action[0]][action[1]] = 'X'
+    symbol = 'X' if human_player else 'O'
+    board[action[0]][action[1]] = symbol
     return board
 
 ################### TESTING ZONE ####################

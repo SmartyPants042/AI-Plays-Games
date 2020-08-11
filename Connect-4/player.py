@@ -1,13 +1,14 @@
 from Board import Board
 
-def move(board):
+def move(board, human_player=True):
 
     dim_x = len(board[0])
     num = int(input(f"Input # between 1 and {dim_x}: "))-1
     actions = Board.get_actions(board, False)
     
+    symbol = 'X' if human_player else 'O'
+
     for action in actions:
         if action[1] == num:
-            return action
-
-    return None
+            board[action[0]][action[1]] = symbol
+            return board
