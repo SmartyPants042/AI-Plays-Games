@@ -181,7 +181,11 @@ class MCTS():
         node.count += 1
         return delta
 
-    def main(board=Board.get_initial_state(), verbose="v", human_player=False):
+    def main(board=Board.get_initial_state(), 
+                verbose="v", 
+                human_player=False, 
+                time_controlled=False,
+                time_given=10):
         """
         The function that controls it all.
         input:
@@ -197,6 +201,10 @@ class MCTS():
                 False for AI playing, 
                 True for Human playing 
                 (can be used for self-play game-simulations.)
+            time_controlled:
+                False if we are to go by number of iterations
+            time_given:
+                Works only if time-constraint is given 
         return:
             the best future board, having the maximum score.
 
@@ -211,24 +219,33 @@ class MCTS():
         start_node = Node(board, human_player)
         MCTS.generate_children(start_node)
         new_start_nodes = start_node.children
+        number_of_children = len(new_start_nodes)
 
-        for i in range(ITERATIONS):
-            for start in new_start_nodes:
-                MCTS.recurse(start)
+        if not time_controlled:
+            for i in range(ITERATIONS):
+                for start in new_start_nodes:
+                    MCTS.recurse(start)
+                if verbose == "v" or verbose == "vv":
+                    done_bar_length = round(i/ITERATIONS*50)
+                    length_left = 50 - done_bar_length
+                    print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
             if verbose == "v" or verbose == "vv":
-                done_bar_length = round(i/ITERATIONS*50)
-                length_left = 50 - done_bar_length
-                print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
-        
-        if verbose == "v" or verbose == "vv":
-            print()
+                print()
+        else:
+            # To give equal time to all
+            while True:
+                for start in new_start_nodes:
+                    MCTS.recurse(start)
+                now_time = time.process_time()
+
+                if now_time - start_time >= time_given:
+                    break
 
         best_child = None
         if not human_player:
             best_score = -MAX
         else:
             best_score = MAX
-
         for child in start_node.children:
             
             if verbose == "vv":
@@ -290,4 +307,4 @@ class MCTS():
 #     ['X', 'O', 'O', 'O', '-', '-', 'X'],
 #     ['O', 'X', 'X', 'O', '-', 'X', 'X'],
 # ]  
-# Board.print_board(MCTS.main(board=board, verbose='vv'))
+# Board.print_board(MCTS.main(board=board, verbose='v', time_controlled=True, time_given=1))
