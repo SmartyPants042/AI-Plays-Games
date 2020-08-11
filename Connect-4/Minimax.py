@@ -6,7 +6,7 @@ MAX = float('inf')
 
 class AI():
     @staticmethod
-    def minimax(maxiPlayer, depth_left, board, alpha, beta):
+    def minimax(maxiPlayer, depth_left, board, alpha, beta, ai_symbol, opp_symbol):
         """
         The Minimax Algorithm with pruning.
         input params:
@@ -32,7 +32,7 @@ class AI():
         winner = Board.evaluate(board)
 
         if winner:
-            return 1 if winner == 'X' else -1
+            return 1 if winner == ai_symbol else -1
         if not depth_left:
             return 0
         
@@ -52,12 +52,20 @@ class AI():
             # available empty cells
             new_board = copy.deepcopy(board)
             if maxiPlayer: # which is AI
-                new_board[child[0]][child[1]] = 'X'
+                new_board[child[0]][child[1]] = ai_symbol
             else: # which is user
-                new_board[child[0]][child[1]] = 'O'
+                new_board[child[0]][child[1]] = opp_symbol
 
             # find present child's score
-            score = AI.minimax((not maxiPlayer), depth_left-1, new_board, alpha, beta)
+            score = AI.minimax(
+                            (not maxiPlayer), 
+                            depth_left-1,
+                            new_board,
+                            alpha,
+                            beta,
+                            ai_symbol,
+                            opp_symbol
+                        )
 
             # store if the board state is worth it
             if maxiPlayer:
@@ -76,12 +84,15 @@ class AI():
         return best
 
     @staticmethod
-    def move(board, level=5):
+    def move(board, level=2, player_x=True):
         """
         Makes a move using the the algorithm.
         Does the first initial 'play' of the algorithm,
         to extract the move, which the minimax actually hides.
         """
+        # symbol logic
+        ai_symbol = 'X' if player_x else 'O'
+        opp_symbol = 'O' if player_x else 'X'
 
         # game logic
         copy_board = copy.deepcopy(board)
@@ -100,9 +111,9 @@ class AI():
             # create a new board according to the 'child', aka
             # available empty cells
             new_copy_board = copy.deepcopy(copy_board)
-            new_copy_board[child[0]][child[1]] = 'X'
+            new_copy_board[child[0]][child[1]] = ai_symbol
 
-            score = AI.minimax(False, level, new_copy_board, -MAX, +MAX)
+            score = AI.minimax(False, level, new_copy_board, -MAX, +MAX, ai_symbol, opp_symbol)
             
             if score == 1:
                 ai_win.append(child)
