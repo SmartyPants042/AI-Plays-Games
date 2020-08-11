@@ -6,7 +6,7 @@ from player import move as player_move
 import random
 import time
 
-def random_move(board, player_x):
+def random_move(board, player_x, level):
     actions = Board.get_actions(board, player_x)
     action = random.choice(actions)
 
@@ -80,13 +80,25 @@ def print_menu():
     while player1 == None:
         player1 = get_player(input("Enter Player1: "))
     
+    level1 = 0
+    if player1 == minimax_move:
+        level1 = float(input("Input level for minimax (1-5 depth): "))
+    elif player1 == mcts_move:
+        level1 = float(input("Input time for mcts (1-10 seconds): "))
+
     player2 = None
     while player2 == None:
         player2 = get_player(input("Enter Player2: "))
     
-    return player1, player2
+    level2 = 0
+    if player2 == minimax_move:
+        level2 = float(input("Input level for minimax (1-5 depth): "))
+    elif player1 == mcts_move:
+        level2 = float(input("Input time for mcts (1-10 seconds): "))
 
-def game_play(player1, player2):
+    return player1, level1, player2, level2
+
+def game_play(player1, level1, player2, level2):
     # variables init
     player = True
     board = Board.get_initial_state()
@@ -104,12 +116,18 @@ def game_play(player1, player2):
         if player:
             print("X's Turn: Thinking ... ")
             start = time.process_time()
-            board = player1(board, player_x=True)
+            try:
+                board = player1(board, player_x=True, level=level1)
+            except:
+                break
             print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
         else:
             print("O's Turn: Thinking ... ")
             start = time.process_time()
-            board = player2(board, player_x=False)
+            try:
+                board = player2(board, player_x=False, level=level2)
+            except:
+                break
             print(f"Got it. Took {round(time.process_time()-start, 2)} seconds")
         
         # switching the player
@@ -118,8 +136,8 @@ def game_play(player1, player2):
 if __name__ == "__main__":
     print_start()
     while True:
-        player1, player2 = print_menu()        
-        game_play(player1, player2)
+        player1, level1, player2, level2 = print_menu()        
+        game_play(player1, level1, player2, level2)
 
         repeat = input("continue? (y/else): ")
         if repeat == 'y' or repeat == "yes":

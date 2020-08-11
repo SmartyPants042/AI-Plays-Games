@@ -84,7 +84,7 @@ class AI():
         return best
 
     @staticmethod
-    def move(board, level=2, player_x=True):
+    def move(board, player_x=True, level=5):
         """
         Makes a move using the the algorithm.
         Does the first initial 'play' of the algorithm,

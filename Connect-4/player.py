@@ -1,6 +1,6 @@
 from Board import Board
 
-def move(board, player_x=True):
+def move(board, player_x=True, level=0):
 
     dim_x = len(board[0])
     num = int(input(f"Input # between 1 and {dim_x}: "))-1
