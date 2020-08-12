@@ -19,12 +19,12 @@ def move(board, player_x=True, level=0):
     symbol = 'X' if player_x else 'O'
     
     while True:
+        if not actions:
+            return None
+            
         num = -1
         while not(0 <= num <= dim_x-1):
             num = int(input(f"Input # between 1 and {dim_x}: "))-1
-
-        if not actions:
-            return None
 
         for action in actions:
             if action[1] == num:
