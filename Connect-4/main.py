@@ -93,7 +93,7 @@ def print_menu():
     level2 = 0
     if player2 == minimax_move:
         level2 = float(input("Input level for minimax (1-5 depth): "))
-    elif player1 == mcts_move:
+    elif player2 == mcts_move:
         level2 = float(input("Input time for mcts (1-10 seconds): "))
 
     return player1, level1, player2, level2
@@ -132,6 +132,8 @@ def game_play(player1, level1, player2, level2):
         
         # switching the player
         player = not player
+    
+    print("DONE")
 
 if __name__ == "__main__":
     print_start()

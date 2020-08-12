@@ -10,7 +10,7 @@ class Board():
     @staticmethod
     def get_initial_state():
         """
-        arranges all the pieces in their init positions 
+        arranges all the pieces in their init positions.
         """
         board = [
             ['-', '-', '-', '-', '-', '-', '-'],
@@ -53,6 +53,8 @@ class Board():
         """
         returns the winner if any, else None
         Returns 0 in case the board is filled
+
+        NOTE: ADD VALUE/POLICY NETWORK's EVALUATION HERE
         """
         
         # check rows

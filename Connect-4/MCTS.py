@@ -298,6 +298,7 @@ class MCTS():
         Board.print_board(node.game_state)
         print("PATH EXIT")
         return
+
 #################### TESTING ZONE ####################
 # board = [
 #     ['-', '-', '-', '-', '-', '-', '-'],

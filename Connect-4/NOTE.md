@@ -10,12 +10,16 @@ the implementation of AlphaGo Zero.)
 3. These K boards are then put in MCTS as the maximizers, each will go through their separate simulation, which runs in the parallel.
 4. All the K boards will have some score at the end, and we will choose the MAX of all of them.
 
-We also somehow integrate the policy and value networks ... Not sure about that right now.
+~~We also somehow integrate the policy and value networks ... Not sure about that right now.~~
+
+UPDATE:
+
+Include the value and policy network evaluations in the Board.evalutae() method.
 
 BONUS: 
-- The AlphaGo team ran the simulations for 1600 Iterations!
+- The AlphaGo team ran the MCTS simulations for 1600 Iterations!
 - While the NNs are powerful on their own, (especially with the dual Policy + Value Networks) they still rely on MCTS for that boost in greatness.
-- This only applies to perfect information games.
+- This *only* applies to perfect information games.
 - Notice that the NN just replaces the start node of the MCTS.
 rest all  remains the same.
 

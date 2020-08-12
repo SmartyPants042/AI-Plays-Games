@@ -89,6 +89,16 @@ class AI():
         Makes a move using the the algorithm.
         Does the first initial 'play' of the algorithm,
         to extract the move, which the minimax actually hides.
+        
+        input: 
+            board:
+                current board
+            player_x:
+                whether to play X or O
+            level:
+                search depth for minimax
+        return: 
+            the best move to make
         """
         # symbol logic
         ai_symbol = 'X' if player_x else 'O'
