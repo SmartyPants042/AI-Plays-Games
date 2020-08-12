@@ -238,8 +238,18 @@ class MCTS():
                     MCTS.recurse(start)
                 now_time = time.process_time()
 
-                if now_time - start_time >= time_given:
+                time_spent = now_time - start_time
+
+                if time_spent >= time_given:
                     break
+
+                if verbose == 'v' or verbose == "vv":
+                    done_bar_length = round(time_spent/time_given*50)
+                    length_left = 50 - done_bar_length
+                    print(f"Progress: [{'='*done_bar_length + '>'+ ' '*length_left}]\r", end = "")
+            
+            if verbose == 'v' or verbose == "vv":    
+                print()
 
         best_child = None
         if not human_player:
