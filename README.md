@@ -20,6 +20,7 @@ A collection of Single/Multiplayer Games Played by AI
 | Chess | - |
 | Snake | - |
 | Dots | - |
+| Car Racing | - |
 
 ## License
 [GNU General Public License v3.0](https://github.com/SmartyPants042/AI-Plays-Games/blob/master/LICENSE)
