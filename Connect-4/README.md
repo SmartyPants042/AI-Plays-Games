@@ -9,16 +9,16 @@ Dimensions: 7 columns x 6 rows
 ### Execute:
 `foo@bar:~/path/to/folder$ python3 main.py`
 
-### There are few different options to get started!
+#### There are few different options to get started!
 ![Main Menu](./Images/Menu.png)
 
-### For Algorithms, You can select 'levels'
+#### For Algorithms, You can select 'levels'
 ![Minimax Levels](./Images/MinimaxLevels.png)
 
-## You can have one algorithm play against the other
+#### You can have one algorithm play against the other
 ![Minimax vs MCTS](./Images/MinimaxVMCTS.png)
 
-### You can also have an algo play against itself!
+#### You can also have an algo play against itself!
 ![MCTS vs MCTS](./Images/MCTSvMCTS.png)
 
 ## Dependencies
