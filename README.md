@@ -11,7 +11,7 @@ A collection of Single/Multiplayer Games Played by AI
 ## Games in Progress
 | Name | Implementation |
 | - | - |
-| - | - |
+| Ping Pong | Q Learning |
 
 ## Games Planned 
 | Name | Implementation |
